@@ -1,0 +1,23 @@
+paper_reference: GradMatch gradient matching subset selection
+implementation_reference: CORDS-style GradMatch selector with bounded candidates
+method_type: training_coupled
+subset_fraction: 0.05
+subset_size: 23240
+min_per_class: 1
+warmup_epochs: 3
+select_every: 18
+selection_interval: 18
+fraction: 0.05
+selection_type: PerClass
+class_balanced: true
+linear_layer: true
+valid: false
+v1: true
+lam: 0.0
+eps: 1.0e-100
+mp_steps_cap: 29
+max_candidate_samples: 12240
+lab2_dataset: covertype
+lab2_method: gradmatch
+lab2_noise_forms: random/shift x rates 0.06,0.12,0.18,0.24,0.30
+lab2_subset_policy: inherits Lab1 subset_fraction/subset_size/fraction

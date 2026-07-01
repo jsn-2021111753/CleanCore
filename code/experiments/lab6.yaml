@@ -1,0 +1,20 @@
+name: lab6
+description: Final Lab6 snapshot-window sensitivity on random 20 percent noise.
+
+script: scripts/run_lab6.sh
+config: configs/default_no_artifacts.yaml
+method_config_root: configs/methods/lab6
+output_root: results/lab6
+noise: random
+noise_rate: 0.20
+seeds: [42]
+
+datasets:
+  - pendigits
+  - magic
+  - sensorless
+  - miniboone
+  - covertype
+
+method: cleancore
+snapshot_L: [2, 4, 6, 8, 10]

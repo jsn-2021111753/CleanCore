@@ -1,0 +1,21 @@
+name: lab3
+description: Final Lab3 CleanCore ablation on random 40 percent noise.
+
+script: scripts/run_lab3.sh
+config: configs/default_no_artifacts.yaml
+method_config_root: configs/methods/lab3
+output_root: results/lab3
+noise: random
+noise_rate: 0.40
+seeds: [42]
+
+datasets:
+  - banknote
+  - pendigits
+  - magic
+  - sensorless
+
+variants:
+  - full
+  - no_weight
+  - no_handle

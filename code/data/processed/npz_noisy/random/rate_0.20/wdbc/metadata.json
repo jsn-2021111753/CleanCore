@@ -1,0 +1,121 @@
+{
+  "dataset": "wdbc",
+  "format": "npz",
+  "source_clean_dir": "code/data/processed/npz_clean/wdbc",
+  "noise_type": "random",
+  "noise_rate": 0.2,
+  "seed": 42,
+  "error_type_ratio": {
+    "label_only": 2,
+    "feature_only": 2,
+    "mixed": 1
+  },
+  "max_corrupted_feature_frac": 0.3,
+  "shift_scale": null,
+  "n_train": 454,
+  "n_test": 115,
+  "n_features": 30,
+  "n_classes": 2,
+  "n_noisy": 91,
+  "n_label_only": 36,
+  "n_feature_only": 36,
+  "n_mixed": 19,
+  "max_corrupted_features_observed": 9,
+  "files": {
+    "train": "train.npz",
+    "test": "test.npz",
+    "noise_info": "noise_info.npz"
+  },
+  "train_arrays": {
+    "X": "float32 noisy features",
+    "y": "int64 noisy labels"
+  },
+  "clean_metadata": {
+    "dataset": "wdbc",
+    "source": "UCI Machine Learning Repository",
+    "uci_id": 17,
+    "raw_file": "wdbc/breast_cancer_wisconsin_diagnostic.zip",
+    "n_features": 30,
+    "n_classes": 2,
+    "n_total": 569,
+    "n_train": 454,
+    "n_test": 115,
+    "feature_columns": [
+      "feature_0",
+      "feature_1",
+      "feature_2",
+      "feature_3",
+      "feature_4",
+      "feature_5",
+      "feature_6",
+      "feature_7",
+      "feature_8",
+      "feature_9",
+      "feature_10",
+      "feature_11",
+      "feature_12",
+      "feature_13",
+      "feature_14",
+      "feature_15",
+      "feature_16",
+      "feature_17",
+      "feature_18",
+      "feature_19",
+      "feature_20",
+      "feature_21",
+      "feature_22",
+      "feature_23",
+      "feature_24",
+      "feature_25",
+      "feature_26",
+      "feature_27",
+      "feature_28",
+      "feature_29"
+    ],
+    "label_column": "label",
+    "label_mapping": {
+      "B": 0,
+      "M": 1
+    },
+    "split": "stratified_80_20_by_label",
+    "split_seed": 42,
+    "train_ratio": 0.8,
+    "test_ratio": 0.19999999999999996,
+    "files": {
+      "train": "train.npz",
+      "test": "test.npz"
+    },
+    "format": "npz",
+    "source_format": "csv",
+    "source_csv_dir": "code/data/processed/csv_clean/wdbc",
+    "arrays": {
+      "X": "float32",
+      "y": "int64",
+      "row_id": "int64"
+    },
+    "npz_summaries": {
+      "train": {
+        "n_samples": 454,
+        "n_features": 30,
+        "labels": [
+          0,
+          1
+        ],
+        "X_dtype": "float32",
+        "y_dtype": "int64",
+        "row_id_dtype": "int64"
+      },
+      "test": {
+        "n_samples": 115,
+        "n_features": 30,
+        "labels": [
+          0,
+          1
+        ],
+        "X_dtype": "float32",
+        "y_dtype": "int64",
+        "row_id_dtype": "int64"
+      }
+    }
+  }
+}

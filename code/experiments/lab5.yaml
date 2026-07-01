@@ -1,0 +1,19 @@
+name: lab5
+description: Final Lab5 subset-budget sensitivity on random 20 percent noise.
+
+script: scripts/run_lab5.sh
+config: configs/default_no_artifacts.yaml
+method_config_root: configs/methods/lab5
+output_root: results/lab5
+noise: random
+noise_rate: 0.20
+seeds: [42]
+
+datasets:
+  - pendigits
+  - magic
+  - sensorless
+  - miniboone
+  - covertype
+
+method: cleancore

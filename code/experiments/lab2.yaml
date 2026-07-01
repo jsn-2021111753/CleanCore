@@ -1,0 +1,23 @@
+name: lab2
+description: Final Lab2 robustness comparison over random and shift noise rates.
+
+script: scripts/run_lab2.sh
+config: configs/default_no_artifacts.yaml
+method_config_root: configs/methods/lab2
+output_root: results/lab2
+noise_types: [random, shift]
+noise_rates: [0.06, 0.12, 0.18, 0.24, 0.30]
+seeds: [42]
+
+datasets:
+  - wdbc
+  - pendigits
+  - magic
+  - miniboone
+  - skin
+  - covertype
+
+methods:
+  - cleancore
+  - gradmatch
+  - deem

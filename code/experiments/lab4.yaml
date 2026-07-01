@@ -1,0 +1,24 @@
+name: lab4
+description: Final Lab4 pretraining-epoch sensitivity on random 20 percent noise.
+
+script: scripts/run_lab4.sh
+config: configs/default_no_artifacts.yaml
+method_config_root: configs/methods/lab4
+output_root: results/lab4
+noise: random
+noise_rate: 0.20
+seeds: [42]
+
+datasets:
+  - pendigits
+  - magic
+  - sensorless
+  - miniboone
+  - covertype
+
+methods:
+  - cleancore
+  - gradmatch
+  - deem
+
+pretrain_epochs: [4, 8, 12, 16, 20]

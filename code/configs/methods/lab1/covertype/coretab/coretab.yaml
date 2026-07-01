@@ -1,0 +1,19 @@
+paper_reference: Datamap-Driven Tabular Coreset Selection for Classifier Training
+implementation_reference: CoreTab official CoreTabXGB create_coreset
+method_type: training_assisted_data_processing
+backend: official_xgboost
+subset_fraction: 0.05
+subset_size: 23240
+min_per_class: 1
+sample_percent: 0.05
+examples_to_keep: 4385
+threshold: 1
+n_jobs: 1
+num_trees: 132
+trees_number: 132
+gbdt_estimators: 132
+gbdt_max_depth: 3
+tau: 5
+min_region_size: 10
+psi: 0.8
+homogeneity_threshold: 0.8

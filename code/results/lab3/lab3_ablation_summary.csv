@@ -1,0 +1,13 @@
+dataset,variant,variant_label,accuracy,total_time_sec
+banknote,full,Full,0.967273,1.012763
+banknote,no_weight,No-Weight,0.923636,1.027034
+banknote,no_handle,No-Handle,0.832727,0.848259
+pendigits,full,Full,0.947399,2.718376
+pendigits,no_weight,No-Weight,0.911950,3.402084
+pendigits,no_handle,No-Handle,0.902802,2.460692
+magic,full,Full,0.824967,4.433977
+magic,no_weight,No-Weight,0.806570,4.216928
+magic,no_handle,No-Handle,0.787648,5.157899
+sensorless,full,Full,0.924897,13.424717
+sensorless,no_weight,No-Weight,0.912850,13.815666
+sensorless,no_handle,No-Handle,0.907297,12.411532

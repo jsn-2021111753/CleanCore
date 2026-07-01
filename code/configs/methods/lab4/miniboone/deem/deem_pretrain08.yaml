@@ -1,0 +1,26 @@
+paper_reference: 'Two Birds with One Stone: Efficient Deep Learning over Mislabeled
+  Data through Subset Selection'
+method_type: training_coupled
+subset_fraction: 0.05
+subset_size: 5203
+min_per_class: 1
+deem_mode: optimized
+warmup_epochs: 8
+selection_interval: 29
+selector: paper_greedy
+soft_label_mode: paper_loss_std
+soft_label_window: 1
+mislabel_remove_ratio: 0.004
+q: 0.004
+subset_update_threshold: 0.385
+tau: 0.385
+greedy_sample_size: 256
+greedy_eval_sample_size: 384
+greedy_steps_cap: 8
+max_candidate_samples: 18750
+mapping_sample_size: 9000
+mapping_backend: ball_tree
+distance_row_batch_size: 4096
+distance_candidate_batch_size: 51
+greedy_batch_size: 51
+update_strategy: inherit_cluster

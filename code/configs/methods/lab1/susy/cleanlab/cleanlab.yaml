@@ -1,0 +1,11 @@
+paper_reference: Confident Learning via cleanlab
+implementation_reference: cleanlab public package API
+method_type: training_assisted_data_processing
+cv_n_folds: 2
+cv_folds: 2
+cv_epochs: 1
+filter_by: predicted_neq_given
+frac_noise: 0.04
+issue_fraction: 0.04
+action: remove
+downweight_value: 0.001

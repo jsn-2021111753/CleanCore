@@ -1,0 +1,15 @@
+paper_reference: CoreTab datamap-driven tabular coreset selection
+implementation_reference: Sklearn datamap approximation for bounded runtime
+method_type: training_assisted_data_processing
+backend: sklearn_datamap
+subset_fraction: 0.01
+subset_size: 45000
+min_per_class: 1
+gbdt_estimators: 160
+num_trees: 160
+gbdt_max_depth: 2
+max_fit_samples: 300000
+min_region_size: 5
+tau: 5
+homogeneity_threshold: 0.8
+psi: 0.8

@@ -1,0 +1,13 @@
+paper_reference: 'GoodCore: Data-effective and Data-efficient Machine Learning through
+  Coreset Selection over Incomplete Data'
+method_type: data_processing
+subset_fraction: 0.1
+subset_size: 110
+min_per_class: 1
+coreset_fraction: 0.1
+per_class: true
+h_sample_size: 8
+goodcore_batch_size: 6
+batch_greedy_size: 6
+utility_eval_size: 0
+weighting: unit

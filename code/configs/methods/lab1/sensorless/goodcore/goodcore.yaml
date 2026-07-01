@@ -1,0 +1,16 @@
+paper_reference: GoodCore expected-distance coreset selection
+method_type: data_processing
+subset_fraction: 0.05
+subset_size: 2340
+min_per_class: 1
+coreset_fraction: 0.05
+per_class: true
+h_sample_size: 512
+goodcore_batch_size: 8
+batch_greedy_size: 8
+utility_eval_size: 16000
+weighting: nearest
+weight_row_batch_size: 1024
+weight_center_batch_size: 512
+target_time_sec: 25.0
+timeout_time_sec: 40.0

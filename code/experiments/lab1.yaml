@@ -1,0 +1,94 @@
+name: lab1
+description: Final Lab1 baseline comparison on random 20 percent noise.
+
+config: configs/default_no_artifacts.yaml
+method_config_group: lab1
+noise: random
+noise_rate: 0.20
+seeds: [42]
+
+datasets:
+  - wdbc
+  - banknote
+  - pendigits
+  - magic
+  - sensorless
+  - miniboone
+  - skin
+  - covertype
+  - susy
+  - smartfactory
+
+methods:
+  - cleanlab
+  - misdetect
+  - ctrl
+  - herding
+  - deepfool
+  - gradmatch
+  - coretab
+  - coretab_misdetect
+  - goodcore
+  - deem
+  - misdetect_coretab
+  - cleancore
+
+output_root: results/lab1
+
+default_schedule:
+  threads_per_run: 4
+  max_parallel: 8
+  max_epochs: 400
+  batch_size: 512
+
+schedule:
+  wdbc:
+    threads_per_run: 2
+    max_parallel: 11
+    max_epochs: 800
+    batch_size: 64
+  banknote:
+    threads_per_run: 2
+    max_parallel: 11
+    max_epochs: 800
+    batch_size: 64
+  pendigits:
+    threads_per_run: 4
+    max_parallel: 8
+    max_epochs: 500
+    batch_size: 256
+  magic:
+    threads_per_run: 4
+    max_parallel: 8
+    max_epochs: 400
+    batch_size: 512
+  sensorless:
+    threads_per_run: 4
+    max_parallel: 8
+    max_epochs: 300
+    batch_size: 1024
+  miniboone:
+    threads_per_run: 4
+    max_parallel: 8
+    max_epochs: 250
+    batch_size: 2048
+  skin:
+    threads_per_run: 4
+    max_parallel: 8
+    max_epochs: 200
+    batch_size: 2048
+  covertype:
+    threads_per_run: 4
+    max_parallel: 6
+    max_epochs: 180
+    batch_size: 4096
+  susy:
+    threads_per_run: 4
+    max_parallel: 6
+    max_epochs: 120
+    batch_size: 8192
+  smartfactory:
+    threads_per_run: 4
+    max_parallel: 8
+    max_epochs: 300
+    batch_size: 1024

@@ -1,0 +1,43 @@
+paper_reference: Sequential pipeline baseline using MisDetect and CoreTab
+method_type: sequential_pipeline
+pipeline_order:
+- misdetect
+- coretab
+subset_fraction: 0.01
+subset_size: 45000
+min_per_class: 1
+misdetect:
+  paper_reference: 'MisDetect: Iterative Mislabel Detection using Early Loss'
+  method_type: training_assisted_data_processing
+  rounds: 5
+  epochs_per_round: 2
+  threshold_strategy: mean_std
+  loss_std_factor: 1.4
+  clean_std_factor: 1.3
+  max_remove_ratio: 0.015
+  enable_knn_verification: false
+  knn_k: 20
+  knn_disagreement_threshold: 0.8
+  min_remaining: 180000
+  remove_ratio: 0.015
+coretab:
+  paper_reference: CoreTab datamap-driven tabular coreset selection
+  implementation_reference: Sklearn datamap approximation for bounded runtime
+  method_type: training_assisted_data_processing
+  backend: sklearn_datamap
+  subset_fraction: 0.01
+  subset_size: 45000
+  min_per_class: 1
+  gbdt_estimators: 110
+  num_trees: 110
+  gbdt_max_depth: 3
+  max_fit_samples: 250000
+  min_region_size: 8
+  tau: 8
+  homogeneity_threshold: 0.8
+  psi: 0.8
+  trees_number: 110
+  threshold: 8
+  sample_percent: 0.008
+  examples_to_keep: 1000
+  n_jobs: 1

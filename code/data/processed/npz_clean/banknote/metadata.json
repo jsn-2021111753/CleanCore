@@ -1,0 +1,62 @@
+{
+  "dataset": "banknote",
+  "source": "UCI Machine Learning Repository",
+  "uci_id": 267,
+  "raw_file": "banknote/banknote_authentication.zip",
+  "n_features": 4,
+  "n_classes": 2,
+  "n_total": 1372,
+  "n_train": 1097,
+  "n_test": 275,
+  "feature_columns": [
+    "feature_0",
+    "feature_1",
+    "feature_2",
+    "feature_3"
+  ],
+  "label_column": "label",
+  "label_mapping": {
+    "0": 0,
+    "1": 1
+  },
+  "split": "stratified_80_20_by_label",
+  "split_seed": 42,
+  "train_ratio": 0.8,
+  "test_ratio": 0.19999999999999996,
+  "files": {
+    "train": "train.npz",
+    "test": "test.npz"
+  },
+  "format": "npz",
+  "source_format": "csv",
+  "source_csv_dir": "code/data/processed/csv_clean/banknote",
+  "arrays": {
+    "X": "float32",
+    "y": "int64",
+    "row_id": "int64"
+  },
+  "npz_summaries": {
+    "train": {
+      "n_samples": 1097,
+      "n_features": 4,
+      "labels": [
+        0,
+        1
+      ],
+      "X_dtype": "float32",
+      "y_dtype": "int64",
+      "row_id_dtype": "int64"
+    },
+    "test": {
+      "n_samples": 275,
+      "n_features": 4,
+      "labels": [
+        0,
+        1
+      ],
+      "X_dtype": "float32",
+      "y_dtype": "int64",
+      "row_id_dtype": "int64"
+    }
+  }
+}

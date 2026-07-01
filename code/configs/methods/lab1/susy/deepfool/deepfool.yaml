@@ -1,0 +1,14 @@
+paper_reference: 'DeepFool: A Simple and Accurate Method to Fool Deep Neural Networks'
+implementation_reference: DeepFool boundary-margin scoring with bounded scoring set
+method_type: training_assisted_data_processing
+subset_fraction: 0.01
+subset_size: 45000
+min_per_class: 1
+warmup_epochs: 8
+max_iter: 8
+overshoot: 0.02
+stability_eps: 0.0005
+num_classes_attack: 3
+num_classes: 3
+select_mode: large
+max_scored_samples: 400000

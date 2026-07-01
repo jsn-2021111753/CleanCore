@@ -1,0 +1,12 @@
+{
+  "accuracy": 0.9903901085448462,
+  "macro_precision": 0.9778727802311378,
+  "macro_recall": 0.9939366632337796,
+  "macro_f1": 0.9856358811726551,
+  "total_time_sec": 10.236248537898064,
+  "method_time_sec": 10.20250042155385,
+  "train_time_sec": 8.888635236769915,
+  "epochs_ran": 52.0,
+  "n_train_input": 196045.0,
+  "n_train_selected": 9802.0
+}

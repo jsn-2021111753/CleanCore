@@ -1,0 +1,17 @@
+paper_reference: 'CTRL: Clustering Training Losses for Label Error Detection'
+implementation_reference: chang-yue/ctrl clustering.compute_mask
+method_type: training_assisted_data_processing
+loss_epochs: 6
+moving_average_size: 3
+clamp_losses: false
+loss_thresh_factor: 1.5
+n_clusters_options:
+- 3
+n_windows_options:
+- 1
+n_clusters: 3
+noisy_clusters: 1
+num_windows: 1
+window_threshold: 1.0
+action: downweight
+downweight_value: 0.05

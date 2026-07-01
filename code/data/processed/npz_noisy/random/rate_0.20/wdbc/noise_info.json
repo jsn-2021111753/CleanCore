@@ -1,0 +1,13 @@
+{
+  "dataset": "wdbc",
+  "noise_type": "random",
+  "noise_rate": 0.2,
+  "seed": 42,
+  "label_error_rule": "random different legal class",
+  "feature_error_rule": "random replacement within clean-train feature range",
+  "binary_feature_rule": "binary features are flipped between 0 and 1",
+  "n_noisy": 91,
+  "n_label_only": 36,
+  "n_feature_only": 36,
+  "n_mixed": 19
+}

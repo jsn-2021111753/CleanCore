@@ -1,0 +1,14 @@
+paper_reference: 'DeepFool: A Simple and Accurate Method to Fool Deep Neural Networks'
+implementation_reference: DeepFool public implementation defaults with bounded scoring
+method_type: training_assisted_data_processing
+warmup_epochs: 3
+max_iter: 3
+overshoot: 0.05
+stability_eps: 0.001
+num_classes_attack: 5
+num_classes: 5
+select_mode: small
+max_scored_samples: 0
+subset_fraction: 0.1
+subset_size: 45
+min_per_class: 1

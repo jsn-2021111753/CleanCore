@@ -1,0 +1,12 @@
+paper_reference: 'MisDetect: Iterative Mislabel Detection using Early Loss'
+method_type: training_assisted_data_processing
+rounds: 3
+epochs_per_round: 4
+threshold_strategy: mean_std
+loss_std_factor: 0.2
+clean_std_factor: 1.4
+max_remove_ratio: 0.08
+enable_knn_verification: false
+knn_k: 20
+knn_disagreement_threshold: 0.8
+min_remaining: 20

@@ -1,0 +1,22 @@
+paper_reference: 'GradMatch: Gradient Matching Based Data Subset Selection for Efficient
+  Deep Model Training'
+implementation_reference: CORDS GradMatch SL selector with bounded candidates
+method_type: training_coupled
+subset_fraction: 0.01
+subset_size: 45000
+min_per_class: 1
+warmup_epochs: 4
+select_every: 26
+selection_interval: 26
+fraction: 0.01
+selection_type: PerClassPerGradient
+class_balanced: true
+linear_layer: true
+valid: false
+v1: true
+lam: 0.02
+eps: 1.0e-100
+mp_steps_cap: 256
+max_candidate_samples: 450000
+target_time_sec: 400.0
+timeout_time_sec: 500.0
