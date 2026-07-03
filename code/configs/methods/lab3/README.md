@@ -1,20 +1,5 @@
-# Lab3 Ablation Results
+# Lab3 Configurations
 
-This folder contains the final Lab3 CleanCore ablation configs for random 40% errors.
+These files are loaded by `scripts/run_lab3.sh`.
 
-Variants:
-- `full`: complete CleanCore.
-- `no_weight`: disables sample reliability weighting while keeping error handling and feature repair enabled.
-- `no_handle`: disables error handling, feature repair, and sample reliability weighting.
-
-Selected datasets:
-- banknote
-- pendigits
-- magic
-- sensorless
-
-CSV files:
-- `lab3_ablation_summary.csv`: long-form results, one row per dataset and variant.
-- `lab3_ablation_plot.csv`: wide-form results for plotting grouped bars.
-
-Only lightweight final metrics are kept here; large model and method output artifacts are intentionally omitted.
+Lab3 corresponds to the CleanCore ablation study in Figure `fig:ablation`.

@@ -19,4 +19,3 @@ eps: 1.0e-100
 mp_steps_cap: 256
 max_candidate_samples: 450000
 target_time_sec: 400.0
-timeout_time_sec: 500.0

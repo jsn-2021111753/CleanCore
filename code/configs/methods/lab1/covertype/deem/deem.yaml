@@ -25,4 +25,3 @@ distance_candidate_batch_size: 32
 greedy_batch_size: 32
 update_strategy: inherit_cluster
 target_time_sec: 150.0
-timeout_time_sec: 200.0

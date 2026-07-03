@@ -19,7 +19,6 @@ eps: 1.0e-100
 mp_steps_cap: 112
 max_candidate_samples: 512
 target_time_sec: 20.0
-timeout_time_sec: 30.0
 lab2_dataset: miniboone
 lab2_method: gradmatch
 lab2_noise_forms: random/shift x rates 0.06,0.12,0.18,0.24,0.30

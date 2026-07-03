@@ -63,7 +63,7 @@ def load_method_config_layers(
     method_config_group: str = "",
     explicit_method_config: str = "",
 ) -> tuple[Dict[str, Any], list[str]]:
-    """Load method config layers from broad defaults to dataset-specific overrides."""
+    """Load method config layers from broad defaults to the requested run."""
 
     method_name = method.lower()
     paths: list[Path] = [CONFIG_ROOT / "methods" / "defaults" / f"{method_name}.yaml"]

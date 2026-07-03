@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
 
 from common.interfaces import MethodOutput
 from methods.base import MethodContext
@@ -72,55 +71,6 @@ def _ctrl_noisy_mask(
     }
 
 
-def _ctrl_silhouette(curves: np.ndarray, clean_mask: np.ndarray, labels: np.ndarray) -> float:
-    scores: list[float] = []
-    for c in np.unique(labels):
-        idx = np.where(labels == c)[0]
-        if len(idx) < 3 or len(np.unique(clean_mask[idx])) < 2:
-            continue
-        scores.append(float(silhouette_score(curves[idx], clean_mask[idx].astype(int))))
-    if not scores:
-        return 0.0
-    return float(np.mean(scores))
-
-
-def _search_ctrl_params(
-    y: np.ndarray,
-    curves: np.ndarray,
-    num_classes: int,
-    seed: int,
-    n_clusters_options: list[int],
-    n_windows_options: list[int],
-) -> tuple[np.ndarray, dict[str, object]]:
-    best_score = -np.inf
-    best_noisy = np.zeros(len(y), dtype=bool)
-    best_meta: dict[str, object] = {}
-    for n_clusters in n_clusters_options:
-        for noisy_clusters in range(1, max(2, int(n_clusters))):
-            for num_windows in n_windows_options:
-                for window_threshold in range(1, int(0.5 * int(num_windows)) + 2):
-                    noisy, meta = _ctrl_noisy_mask(
-                        y,
-                        curves,
-                        num_classes,
-                        seed=seed,
-                        n_clusters=int(n_clusters),
-                        noisy_clusters=int(noisy_clusters),
-                        num_windows=int(num_windows),
-                        window_threshold=int(window_threshold),
-                    )
-                    score = _ctrl_silhouette(curves, ~noisy, y)
-                    if score > best_score:
-                        best_score = score
-                        best_noisy = noisy
-                        best_meta = {
-                            **meta,
-                            "mask_score": float(score),
-                            "parameter_search": True,
-                        }
-    return best_noisy, best_meta
-
-
 def run(ctx: MethodContext) -> MethodOutput:
     loss_epochs = int(ctx.param("loss_epochs", ctx.param("score_epochs", 10)))
     moving_average_size = int(ctx.param("moving_average_size", ctx.param("smooth_window", 5)))
@@ -130,7 +80,6 @@ def run(ctx: MethodContext) -> MethodOutput:
     window_threshold = float(ctx.param("window_threshold", ctx.param("t", 1.0)))
     clamp_losses = bool(ctx.param("clamp_losses", True))
     loss_thresh_factor = float(ctx.param("loss_thresh_factor", 2.0))
-    parameter_search = bool(ctx.param("parameter_search", False))
     action = str(ctx.param("action", "remove")).lower()
     downweight_value = float(ctx.param("downweight_value", 0.1))
 
@@ -141,31 +90,17 @@ def run(ctx: MethodContext) -> MethodOutput:
         if clamp_losses:
             curves = np.minimum(curves, np.float32(loss_thresh))
         curve_features = _moving_average(curves, moving_average_size)
-    if parameter_search:
-        with ctx.timed_phase("ctrl.parameter_search"):
-            cluster_options = [int(x) for x in ctx.param("n_clusters_options", [2, 3])]
-            window_options = [int(x) for x in ctx.param("n_windows_options", [1, 2, 4])]
-            noisy_mask, ctrl_meta = _search_ctrl_params(
-                ctx.y_train,
-                curve_features,
-                ctx.num_classes,
-                seed=ctx.seed,
-                n_clusters_options=cluster_options,
-                n_windows_options=window_options,
-            )
-    else:
-        with ctx.timed_phase("ctrl.clustering"):
-            noisy_mask, ctrl_meta = _ctrl_noisy_mask(
-                ctx.y_train,
-                curve_features,
-                ctx.num_classes,
-                seed=ctx.seed,
-                n_clusters=n_clusters,
-                noisy_clusters=noisy_clusters,
-                num_windows=num_windows,
-                window_threshold=window_threshold,
-            )
-        ctrl_meta["parameter_search"] = False
+    with ctx.timed_phase("ctrl.clustering"):
+        noisy_mask, ctrl_meta = _ctrl_noisy_mask(
+            ctx.y_train,
+            curve_features,
+            ctx.num_classes,
+            seed=ctx.seed,
+            n_clusters=n_clusters,
+            noisy_clusters=noisy_clusters,
+            num_windows=num_windows,
+            window_threshold=window_threshold,
+        )
 
     with ctx.timed_phase("ctrl.action_application"):
         if action == "remove":

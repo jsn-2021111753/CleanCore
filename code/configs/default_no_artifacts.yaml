@@ -1,4 +1,4 @@
-# Shared defaults for large experiment sweeps that only need lightweight results.
+# Shared defaults for reproduction runs that keep lightweight outputs.
 
 model:
   hidden_dims: [256, 128]

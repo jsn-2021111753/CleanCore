@@ -25,7 +25,6 @@ distance_candidate_batch_size: 26
 greedy_batch_size: 26
 update_strategy: inherit_cluster
 target_time_sec: 150.0
-timeout_time_sec: 200.0
 lab2_dataset: covertype
 lab2_method: deem
 lab2_noise_forms: random/shift x rates 0.06,0.12,0.18,0.24,0.30

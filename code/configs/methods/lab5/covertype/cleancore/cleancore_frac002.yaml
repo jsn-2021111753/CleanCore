@@ -74,5 +74,4 @@ lab5_lab6_base_kind: lab2_inherited
 lab5_dataset: covertype
 lab5_method: cleancore
 lab5_subset_fraction: 0.02
-lab5_sweep_axis: subset_fraction
 lab5_noise_form: random_rate_0.20_seed42

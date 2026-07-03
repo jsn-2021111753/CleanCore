@@ -13,4 +13,3 @@ weighting: nearest
 weight_row_batch_size: 1024
 weight_center_batch_size: 512
 target_time_sec: 25.0
-timeout_time_sec: 40.0

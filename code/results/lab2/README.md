@@ -1,6 +1,5 @@
-# Lab2 Final Results
+# Lab2 Results
 
-Updated: 2026-06-18T19:54:30
+Lab2 corresponds to the random/shift dirty-data comparison in Figure `fig:random-errors`, Figure `fig:shift-errors`, and Table `tab:skin_covertype`.
 
-Final result directories contain only `final_metrics.json` for each dataset/noise/method run.
-Use `summary.csv` for the full compact table, and `csv_by_dataset_noise/` for per-dataset random/shift CSVs.
+The directory contains compact `final_metrics.json` files and summary CSVs.

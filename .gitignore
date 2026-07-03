@@ -25,6 +25,7 @@ code/data/processed/npz_noisy/**
 !code/data/processed/npz_noisy/random/rate_0.20/banknote/
 !code/data/processed/npz_noisy/random/rate_0.20/banknote/**
 code/results/smoke/
+code/results/checks/
 code/results/**/run.log
 code/results/**/*.pt
 code/results/**/method_output.npz

@@ -1,4 +1,4 @@
-"""Incremental, timeout-resilient timing records for experiment runs."""
+"""Incremental timing records for experiment runs."""
 
 from __future__ import annotations
 
@@ -127,22 +127,4 @@ class IncrementalTimingRecorder:
             self._write_locked()
         self._stop.set()
         if self._thread.is_alive() and threading.current_thread() is not self._thread:
-            self._thread.join(timeout=max(0.1, self.heartbeat_interval_sec * 2.0))
-
-
-def mark_timing_timeout(path: Path, timeout_sec: Optional[float]) -> None:
-    """Mark a child timing file after the parent runner enforces a timeout."""
-
-    timing_path = Path(path)
-    if not timing_path.exists():
-        return
-    try:
-        payload = json.loads(timing_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return
-    payload["status"] = "timeout"
-    payload["timeout_sec"] = None if timeout_sec is None else float(timeout_sec)
-    payload["timeout_marked_at_utc"] = _utc_now()
-    temp = timing_path.with_name(timing_path.name + ".tmp")
-    temp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    temp.replace(timing_path)
+            self._thread.join(max(0.1, self.heartbeat_interval_sec * 2.0))

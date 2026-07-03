@@ -73,5 +73,4 @@ lab5_lab6_base_kind: bounded_analysis_variant
 lab5_dataset: miniboone
 lab5_method: cleancore
 lab5_subset_fraction: 0.08
-lab5_sweep_axis: subset_fraction
 lab5_noise_form: random_rate_0.20_seed42

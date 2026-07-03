@@ -1,31 +1,28 @@
 # Scripts
 
-- `download_uci_archives.py`: download official UCI zip archives into `data/raw/`.
-- `prepare_csv_datasets.py`: convert raw UCI archives to unified clean CSV train/test splits.
-- `prepare_npz_datasets.py`: convert clean CSV files to aligned clean NPZ files.
-- `make_noisy_npz.py`: generate fixed random or distribution-shift noisy NPZ files from clean NPZ files.
-- `prepare_rein_datasets.py`: prepare SmartFactory and HAR style REIN clean/dirty CSVs as NPZ inputs.
-- `validate_noisy_npz.py`: check noisy NPZ schema and corruption metadata.
-- `run_final_lab.py`: build and execute the final Lab1-Lab6 job sets.
-- `run_lab1.sh` ... `run_lab6.sh`: run individual labs.
-- `run_all_labs.sh`: run all labs in order.
+This directory contains the data preparation scripts and Lab1-Lab6 runners.
 
-Common commands:
+## Data Preparation
 
 ```bash
 python scripts/download_uci_archives.py --dataset all
 python scripts/prepare_csv_datasets.py --dataset all --overwrite
 python scripts/prepare_npz_datasets.py --dataset all --overwrite
 python scripts/make_noisy_npz.py --dataset all --noise-type all --noise-rate 0.20 --seed 42 --overwrite
-python scripts/validate_noisy_npz.py --dataset all --noise-type random --noise-rate 0.20
 ```
 
-Batch experiments:
+Additional dirty-data inputs for Lab2 and Lab3 can be generated with the rates listed in the top-level README.
+
+## Lab Runners
 
 ```bash
-bash scripts/run_lab1.sh --dry-run
 bash scripts/run_lab1.sh
+bash scripts/run_lab2.sh
+bash scripts/run_lab3.sh
+bash scripts/run_lab4.sh
+bash scripts/run_lab5.sh
+bash scripts/run_lab6.sh
 bash scripts/run_all_labs.sh
 ```
 
-Successful jobs write `final_metrics.json`; failed jobs retain `run.log` in their output directory.
+Each successful run writes `final_metrics.json` under `results/lab*/`.

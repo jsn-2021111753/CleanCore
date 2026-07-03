@@ -74,5 +74,4 @@ lab5_lab6_base_kind: bounded_analysis_variant
 lab6_dataset: covertype
 lab6_method: cleancore
 lab6_snapshot_L: 10
-lab6_sweep_axis: snapshot_L
 lab6_noise_form: random_rate_0.20_seed42

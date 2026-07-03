@@ -74,5 +74,4 @@ lab5_lab6_base_kind: lab2_inherited
 lab6_dataset: sensorless
 lab6_method: cleancore
 lab6_snapshot_L: 8
-lab6_sweep_axis: snapshot_L
 lab6_noise_form: random_rate_0.20_seed42
