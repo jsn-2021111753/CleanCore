@@ -3,8 +3,6 @@ method_type: data_processing
 subset_fraction: 0.1
 subset_size: 1892
 min_per_class: 1
-note: Herding has no extra runtime knob in this implementation; variants preserve
-  the paper-style method.
 tie_break_seed_offset: 0
 candidate_pool_size: 0
 candidate_strategy: nearest_mean

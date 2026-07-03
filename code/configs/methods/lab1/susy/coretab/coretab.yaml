@@ -1,5 +1,5 @@
 paper_reference: CoreTab datamap-driven tabular coreset selection
-implementation_reference: Sklearn datamap approximation for bounded runtime
+implementation_reference: Sklearn datamap implementation
 method_type: training_assisted_data_processing
 backend: sklearn_datamap
 subset_fraction: 0.01

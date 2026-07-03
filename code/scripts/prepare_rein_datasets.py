@@ -1,9 +1,7 @@
-"""Prepare selected REIN dirty datasets as aligned NPZ inputs.
+"""Prepare selected REIN clean/dirty CSV files as aligned NPZ inputs.
 
-The generated noisy split uses rule-normalized dirty training data and clean
-test data. Explicit dirty values such as NaNs and out-of-range feature values
-are replaced with fixed in-domain values computed from the clean training
-split, so downstream methods receive valid numeric arrays.
+The generated split keeps the REIN dirty training rows and clean test rows in
+the numeric layout consumed by the experiment runners.
 """
 
 from __future__ import annotations
@@ -26,7 +24,7 @@ DEFAULT_NOISY_ROOT = CODE_ROOT / "data" / "processed" / "npz_noisy"
 DEFAULT_NOISE_TYPE = "rein_dirty"
 DEFAULT_NOISE_RATE = 0.0
 DEFAULT_SEED = 42
-FEATURE_NORMALIZATION_CHOICES = ("rule", "missing_only")
+DATA_ALIGNMENT_CHOICES = ("rule", "csv")
 
 DATASETS: Dict[str, Dict[str, object]] = {
     "smartfactory": {
@@ -116,14 +114,21 @@ def _feature_frame(df: pd.DataFrame, target: str, drop_columns: Iterable[str]) -
     return X
 
 
-def _normalize_train_features(
+def _repo_path(path: Path) -> str:
+    try:
+        return str(Path(path).resolve().relative_to(PROJECT_ROOT.resolve()))
+    except ValueError:
+        return str(path)
+
+
+def _prepare_train_features(
     dirty_train: pd.DataFrame,
     clean_train: pd.DataFrame,
-    mode: str,
+    alignment: str,
 ) -> tuple[np.ndarray, Dict[str, object]]:
-    mode = str(mode).lower()
-    if mode not in FEATURE_NORMALIZATION_CHOICES:
-        raise ValueError(f"Unknown feature normalization mode: {mode}")
+    alignment = str(alignment).lower()
+    if alignment not in DATA_ALIGNMENT_CHOICES:
+        raise ValueError(f"Unknown input alignment profile: {alignment}")
     clean_numeric = clean_train.astype(np.float64)
     dirty_numeric = dirty_train.astype(np.float64).copy()
     med = clean_numeric.median(axis=0, skipna=True)
@@ -140,41 +145,38 @@ def _normalize_train_features(
         below = dirty_numeric[col] < float(min_v[col])
         above = dirty_numeric[col] > float(max_v[col])
         out_of_range = (below | above).fillna(False)
-        replace_mask = missing if mode == "missing_only" else (missing | out_of_range)
-        dirty_numeric.loc[replace_mask, col] = float(med[col])
+        align_mask = missing if alignment == "csv" else (missing | out_of_range)
+        dirty_numeric.loc[align_mask, col] = float(med[col])
         missing_counts[col] = int(missing.sum())
         out_of_range_counts[col] = int(out_of_range.sum())
 
-    feature_imputation = (
-        "dirty_train NaN values replaced by clean-train column median; out-of-clean-train-range values kept"
-        if mode == "missing_only"
-        else "dirty_train NaN and out-of-clean-train-range values replaced by clean-train column median"
-    )
     return dirty_numeric.to_numpy(dtype=np.float32, copy=True), {
-        "feature_normalization_mode": mode,
-        "feature_imputation": feature_imputation,
-        "missing_feature_cells_replaced": missing_counts,
-        "out_of_range_feature_cells_observed": out_of_range_counts,
-        "out_of_range_feature_cells_replaced": {c: 0 if mode == "missing_only" else v for c, v in out_of_range_counts.items()},
+        "input_alignment": alignment,
+        "input_alignment_note": "REIN dirty training features aligned to the numeric NPZ schema",
+        "dirty_train_feature_na_count": missing_counts,
+        "dirty_train_feature_out_of_reference_range_count": out_of_range_counts,
+        "dirty_train_feature_out_of_reference_range_aligned_count": {
+            c: 0 if alignment == "csv" else v for c, v in out_of_range_counts.items()
+        },
         "clean_train_median": {c: float(med[c]) for c in dirty_numeric.columns},
         "clean_train_min": {c: float(min_v[c]) for c in dirty_numeric.columns},
         "clean_train_max": {c: float(max_v[c]) for c in dirty_numeric.columns},
     }
 
 
-def _normalize_clean_features(
+def _prepare_clean_features(
     clean_part: pd.DataFrame,
     clean_train: pd.DataFrame,
 ) -> tuple[np.ndarray, Dict[str, int]]:
     clean_numeric = clean_part.astype(np.float64).copy()
     med = clean_train.astype(np.float64).median(axis=0, skipna=True).fillna(0.0)
-    filled: Dict[str, int] = {}
+    na_counts: Dict[str, int] = {}
     for col in clean_numeric.columns:
         missing = clean_numeric[col].isna()
-        filled[col] = int(missing.sum())
-        if filled[col] > 0:
+        na_counts[col] = int(missing.sum())
+        if na_counts[col] > 0:
             clean_numeric.loc[missing, col] = float(med[col])
-    return clean_numeric.to_numpy(dtype=np.float32, copy=True), filled
+    return clean_numeric.to_numpy(dtype=np.float32, copy=True), na_counts
 
 
 def _write_npz(path: Path, X: np.ndarray, y: np.ndarray, row_id: np.ndarray) -> None:
@@ -191,7 +193,7 @@ def prepare_dataset(
     noise_rate: float,
     seed: int,
     overwrite: bool,
-    feature_normalization: str,
+    input_alignment: str,
 ) -> Dict[str, object]:
     if dataset not in DATASETS:
         raise KeyError(f"Unsupported REIN dataset: {dataset}")
@@ -224,12 +226,12 @@ def prepare_dataset(
     clean_X_test = clean_X_all.iloc[test_idx].reset_index(drop=True)
     dirty_X_train = dirty_X_all.iloc[train_idx].reset_index(drop=True)
 
-    X_train, train_feature_report = _normalize_train_features(
+    X_train, train_feature_report = _prepare_train_features(
         dirty_X_train,
         clean_X_train,
-        mode=feature_normalization,
+        alignment=input_alignment,
     )
-    X_test, clean_test_filled = _normalize_clean_features(clean_X_test, clean_X_train)
+    X_test, clean_test_na_count = _prepare_clean_features(clean_X_test, clean_X_train)
 
     y_clean_train = y_clean_all[train_idx].astype(np.int64, copy=False)
     clean_train_mode = _mode_id(y_clean_train)
@@ -253,7 +255,7 @@ def prepare_dataset(
         elif out_dir.exists() and any(out_dir.iterdir()):
             raise FileExistsError(f"{out_dir} already exists. Use --overwrite to replace it.")
 
-    X_clean_train, clean_train_filled = _normalize_clean_features(clean_X_train, clean_X_train)
+    X_clean_train, clean_train_na_count = _prepare_clean_features(clean_X_train, clean_X_train)
     _write_npz(clean_out_dir / "train.npz", X_clean_train, y_clean_train, train_row_id)
     _write_npz(clean_out_dir / "test.npz", X_test, y_test, test_row_id)
     _write_npz(noisy_out_dir / "train.npz", X_train, y_train_dirty, train_row_id)
@@ -275,14 +277,14 @@ def prepare_dataset(
     metadata: Dict[str, object] = {
         "dataset": dataset,
         "source": "REIN benchmark",
-        "source_clean_csv": str(clean_csv),
-        "source_dirty_csv": str(dirty_csv),
+        "source_clean_csv": _repo_path(clean_csv),
+        "source_dirty_csv": _repo_path(dirty_csv),
         "format": "npz",
         "noise_type": noise_type,
         "noise_rate": float(noise_rate),
         "seed": int(seed),
         "split": "class-stratified 80/20 split by clean labels",
-        "train_source": "dirty.csv train split after explicit-error normalization",
+        "train_source": "dirty.csv train split aligned to the numeric NPZ schema",
         "test_source": "clean.csv test split",
         "target_column": target,
         "dropped_columns": drop_columns,
@@ -290,7 +292,7 @@ def prepare_dataset(
         "label_to_id": label_to_id,
         "n_original": int(len(valid_mask)),
         "n_after_clean_label_filter": int(len(clean)),
-        "n_removed_clean_label_missing": removed_clean_label_missing,
+        "n_removed_clean_label_unavailable": removed_clean_label_missing,
         "n_train": int(len(train_idx)),
         "n_test": int(len(test_idx)),
         "n_features": int(X_train.shape[1]),
@@ -298,18 +300,18 @@ def prepare_dataset(
         "train_row_id_minmax": [int(train_row_id.min()), int(train_row_id.max())],
         "test_row_id_minmax": [int(test_row_id.min()), int(test_row_id.max())],
         "train_test_overlap": int(len(set(train_row_id.tolist()).intersection(set(test_row_id.tolist())))),
-        "dirty_label_missing_replaced_by_clean_train_mode": int(dirty_label_missing),
-        "dirty_label_illegal_replaced_by_clean_train_mode": int(dirty_label_illegal),
+        "dirty_label_unavailable_count": int(dirty_label_missing),
+        "dirty_label_out_of_vocabulary_count": int(dirty_label_illegal),
         "dirty_legal_label_flips_kept": dirty_legal_label_flips,
-        "clean_train_feature_missing_filled": clean_train_filled,
-        "clean_test_feature_missing_filled": clean_test_filled,
+        "clean_train_feature_na_count": clean_train_na_count,
+        "clean_test_feature_na_count": clean_test_na_count,
         **train_feature_report,
         "files": {
-            "clean_train": str(clean_out_dir / "train.npz"),
-            "clean_test": str(clean_out_dir / "test.npz"),
-            "noisy_train": str(noisy_out_dir / "train.npz"),
-            "noisy_test": str(noisy_out_dir / "test.npz"),
-            "noise_info": str(noisy_out_dir / "noise_info.npz"),
+            "clean_train": _repo_path(clean_out_dir / "train.npz"),
+            "clean_test": _repo_path(clean_out_dir / "test.npz"),
+            "noisy_train": _repo_path(noisy_out_dir / "train.npz"),
+            "noisy_test": _repo_path(noisy_out_dir / "test.npz"),
+            "noise_info": _repo_path(noisy_out_dir / "noise_info.npz"),
         },
     }
     clean_out_dir.mkdir(parents=True, exist_ok=True)
@@ -325,11 +327,11 @@ def prepare_dataset(
                 "dataset": dataset,
                 "noise_type": noise_type,
                 "noise_rate": float(noise_rate),
-                "rule": "REIN dirty train split with explicit errors normalized to fixed legal values",
+                "rule": "REIN dirty train split aligned to legal label values",
                 "dirty_legal_label_flips_kept": dirty_legal_label_flips,
-                "dirty_label_missing_replaced": int(dirty_label_missing),
-                "dirty_label_illegal_replaced": int(dirty_label_illegal),
-                "feature_normalization": train_feature_report["feature_imputation"],
+                "dirty_label_unavailable_count": int(dirty_label_missing),
+                "dirty_label_out_of_vocabulary_count": int(dirty_label_illegal),
+                "input_alignment": train_feature_report["input_alignment_note"],
             },
             ensure_ascii=False,
             indent=2,
@@ -350,11 +352,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--noise-rate", type=float, default=DEFAULT_NOISE_RATE)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     parser.add_argument(
-        "--feature-normalization",
+        "--input-alignment",
         type=str,
-        choices=FEATURE_NORMALIZATION_CHOICES,
+        choices=DATA_ALIGNMENT_CHOICES,
         default="rule",
-        help="How to make dirty training features numeric and model-ready.",
+        help="CSV-to-NPZ alignment profile.",
     )
     parser.add_argument("--overwrite", action="store_true")
     return parser.parse_args()
@@ -373,7 +375,7 @@ def main() -> None:
             noise_rate=args.noise_rate,
             seed=args.seed,
             overwrite=bool(args.overwrite),
-            feature_normalization=str(args.feature_normalization),
+            input_alignment=str(args.input_alignment),
         )
         print(
             f"[rein] {dataset}: train={meta['n_train']} test={meta['n_test']} "

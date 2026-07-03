@@ -1,4 +1,4 @@
-"""Run the final Lab1-Lab6 experiment selections with exact output layouts."""
+"""Run the Lab1-Lab6 reproduction jobs with exact output layouts."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ import json
 import os
 import subprocess
 import sys
-import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
@@ -70,7 +69,7 @@ def run_name(noise: str, noise_rate: float, seed: int = 42) -> str:
 
 def lab1_noise(dataset: str) -> tuple[str, float]:
     if dataset == "smartfactory":
-        return "rein_missing_only", 0.0
+        return "rein_smartfactory", 0.0
     return "random", 0.20
 
 
@@ -329,14 +328,13 @@ def keep_final_metrics_only(output_dir: Path) -> None:
 def run_one(job: Job, python_executable: str, force: bool) -> dict[str, object]:
     final_metrics = job.output_dir / "final_metrics.json"
     if final_metrics.exists() and not force:
-        return {"job": job, "status": "skipped", "elapsed_sec": 0.0}
+        return {"job": job, "status": "skipped"}
     job.output_dir.mkdir(parents=True, exist_ok=True)
-    started = time.perf_counter()
     log_path = job.output_dir / "run.log"
     command = build_command(job, python_executable)
     with log_path.open("w", encoding="utf-8") as log_file:
         log_file.write("command: " + json.dumps(command, ensure_ascii=False) + "\n")
-        log_file.write(f"threads_per_run: {job.schedule['threads_per_run']}\n\n")
+        log_file.write("\n")
         log_file.flush()
         proc = subprocess.run(
             command,
@@ -346,11 +344,10 @@ def run_one(job: Job, python_executable: str, force: bool) -> dict[str, object]:
             stderr=subprocess.STDOUT,
             check=False,
         )
-    elapsed = time.perf_counter() - started
     status = "ok" if proc.returncode == 0 else "failed"
     if status == "ok":
         keep_final_metrics_only(job.output_dir)
-    return {"job": job, "status": status, "elapsed_sec": round(elapsed, 3), "returncode": proc.returncode}
+    return {"job": job, "status": status, "returncode": proc.returncode}
 
 
 def group_by_dataset(jobs: list[Job]) -> list[tuple[str, list[Job]]]:
@@ -366,7 +363,7 @@ def group_by_dataset(jobs: list[Job]) -> list[tuple[str, list[Job]]]:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run final Lab1-Lab6 experiment selections.")
+    parser = argparse.ArgumentParser(description="Run Lab1-Lab6 reproduction jobs.")
     parser.add_argument("--lab", choices=sorted(JOB_BUILDERS), required=True)
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--force", action="store_true", help="Re-run jobs even when final_metrics.json exists.")
@@ -389,13 +386,8 @@ def main() -> None:
                         "label": job.label,
                         "noise": job.noise,
                         "noise_rate": job.noise_rate,
-                        "threads_per_run": job.schedule["threads_per_run"],
-                        "max_parallel": job.schedule["max_parallel"],
-                        "max_epochs": job.schedule["max_epochs"],
-                        "batch_size": job.schedule["batch_size"],
                         "method_config": str(job.config_path),
                         "output_dir": str(job.output_dir),
-                        "command": build_command(job, args.python),
                     },
                     ensure_ascii=False,
                 )
@@ -405,19 +397,13 @@ def main() -> None:
     failures = 0
     for dataset, dataset_jobs in group_by_dataset(jobs):
         schedule = SCHEDULE[dataset]
-        print(
-            f"[{args.lab}/{dataset}] jobs={len(dataset_jobs)} "
-            f"threads_per_run={schedule['threads_per_run']} max_parallel={schedule['max_parallel']}"
-        )
+        print(f"[{args.lab}/{dataset}] jobs={len(dataset_jobs)}")
         with ThreadPoolExecutor(max_workers=schedule["max_parallel"]) as pool:
             futures = [pool.submit(run_one, job, args.python, bool(args.force)) for job in dataset_jobs]
             for future in as_completed(futures):
                 row = future.result()
                 job = row["job"]
-                print(
-                    f"  {job.method}/{job.label or job.method} seed={job.seed} "
-                    f"{row['status']} elapsed={row['elapsed_sec']}s"
-                )
+                print(f"  {job.method}/{job.label or job.method} seed={job.seed} {row['status']}")
                 if row["status"] == "failed":
                     failures += 1
     if failures:

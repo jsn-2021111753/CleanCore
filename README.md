@@ -28,6 +28,8 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
+For the dependency set used to validate this artifact, install `requirements-tested.txt` instead of `requirements.txt`.
+
 ## Data Preparation
 
 The repository includes WDBC and Banknote inputs for immediate execution checks. The remaining public datasets can be prepared from their listed sources.

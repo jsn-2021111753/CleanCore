@@ -1,5 +1,5 @@
 paper_reference: 'Confident Learning: Estimating Uncertainty in Dataset Labels'
-implementation_reference: cleanlab public API with broad weakening search
+implementation_reference: cleanlab public API
 method_type: training_assisted_data_processing
 cv_n_folds: 5
 cv_folds: 5

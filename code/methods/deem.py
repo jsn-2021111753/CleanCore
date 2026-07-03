@@ -78,10 +78,6 @@ def _batch_size(value: int, default: int) -> int:
     return max(1, int(parsed))
 
 
-def _distance_workspace_mb(row_batch_size: int, center_batch_size: int) -> float:
-    return float(max(1, int(row_batch_size)) * max(1, int(center_batch_size)) * np.dtype(np.float32).itemsize) / (1024.0 * 1024.0)
-
-
 def _squared_distances_block(X: np.ndarray, C: np.ndarray) -> np.ndarray:
     row_norms = np.sum(X * X, axis=1, dtype=np.float32)[:, None]
     center_norms = np.sum(C * C, axis=1, dtype=np.float32)[None, :]
@@ -382,8 +378,6 @@ def _paper_greedy_gradient_subset(
         "distance_backend": str(mapping_backend).lower(),
         "distance_row_batch_size": int(row_batch_size),
         "distance_candidate_batch_size": int(candidate_batch_size),
-        "estimated_distance_workspace_mb": _distance_workspace_mb(row_batch_size, candidate_batch_size),
-        "gradient_embedding_mb": float(G.nbytes) / (1024.0 * 1024.0),
         "gradient_error": float(error),
         "greedy_time_sec": float(greedy_time_sec),
         "mapping_time_sec": float(mapping_time_sec),
@@ -784,7 +778,6 @@ def run(ctx: MethodContext) -> MethodOutput:
         "distance_backend": mapping_backend if selector == "paper_greedy" else "gradient_selector",
         "distance_row_batch_size": distance_row_batch_size,
         "distance_candidate_batch_size": distance_candidate_batch_size,
-        "estimated_distance_workspace_mb": _distance_workspace_mb(distance_row_batch_size, distance_candidate_batch_size),
         "mean_soft_alpha": float(alpha.mean()),
         "mean_observed_label_prob": float(observed_label_prob.mean()),
         "num_removed": int(predicted_noisy.sum()),

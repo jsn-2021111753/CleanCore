@@ -1,8 +1,8 @@
-# 原始数据来源
+# Raw Data Sources
 
-本目录保存 UCI Machine Learning Repository 的原始下载包。当前只保存官方 `.zip` 包，不在 `raw/` 中修改、重排或加噪数据。
+This directory stores the original archive files downloaded from the UCI Machine Learning Repository. The archives are kept in their original form; derived CSV and NPZ files are prepared by the scripts under `code/scripts/`.
 
-| 数据集 | UCI ID | 数据集页面 | 本地文件 |
+| Dataset | UCI ID | Dataset page | Local archive |
 | --- | ---: | --- | --- |
 | WDBC / Breast Cancer Wisconsin Diagnostic | 17 | https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic | `wdbc/breast_cancer_wisconsin_diagnostic.zip` |
 | Banknote Authentication | 267 | https://archive.ics.uci.edu/dataset/267/banknote+authentication | `banknote/banknote_authentication.zip` |
