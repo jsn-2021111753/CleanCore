@@ -51,15 +51,12 @@ python scripts/make_noisy_npz.py --dataset all --noise-type all --noise-rate 0.3
 python scripts/make_noisy_npz.py --dataset all --noise-type random --noise-rate 0.40 --seed 42 --overwrite
 ```
 
-Prepare the REIN SmartFactory setting:
+The SmartFactory clean/dirty CSV files used by Lab1 are included under
+`rein-datasets/smartfactory/`. The following command prepares them for the
+experiment runners.
 
 ```bash
-python scripts/prepare_rein_datasets.py \
-  --dataset smartfactory \
-  --noise-type rein_missing_only \
-  --noise-rate 0.0 \
-  --feature-normalization missing_only \
-  --overwrite
+bash scripts/prepare_smartfactory.sh
 ```
 
 ## Lab Mapping
